@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getPackages, Package } from "@/lib/packages";
 import { Packages } from "./Packages";
+import Link from "next/link";
 
 export function FeaturedPackages() {
   const [packages, setPackages] = useState<Package[]>([]);
@@ -36,7 +37,7 @@ export function FeaturedPackages() {
       </h2>
       <Packages packages={packages} />
       <div className="flex justify-center mt-8">
-        <a
+        <Link
           href="/packages"
           className="inline-flex items-center px-8 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200"
         >
@@ -53,7 +54,7 @@ export function FeaturedPackages() {
               clipRule="evenodd"
             />
           </svg>
-        </a>
+        </Link>
       </div>
     </section>
   );

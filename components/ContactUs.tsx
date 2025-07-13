@@ -27,8 +27,9 @@ export function ContactUs() {
 
     // Prepare the payload
     const payload = {
-      phone: formData.phone,
-      message: formData.message,
+      templat_params: {
+        message: formData.toString(),
+      },
     };
 
     try {
