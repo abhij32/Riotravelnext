@@ -64,17 +64,17 @@ export function Footer() {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Quick Links</h3>
           <ul className="space-y-2">
-            <li>
+            {/* <li>
               <Link href="/about">About Us</Link>
             </li>
             <li>
               <Link href="/services">Our Services</Link>
-            </li>
+            </li> */}
             <li>
               <Link href="/contact">Contact</Link>
             </li>
             <li>
-              <Link href="/booking">Book Now</Link>
+              <Link href="/packages">Packages</Link>
             </li>
           </ul>
         </div>

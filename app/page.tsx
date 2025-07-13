@@ -1,6 +1,6 @@
 import { WhyUsSection } from "@/components/WhyUsSection";
 import { HeroSection } from "@/components/HeroSection";
-import { Packages } from "@/components/Packages";
+import { FeaturedPackages } from "@/components/FeaturedPackages";
 import { GoogleRating } from "@/components/GoogleRating";
 import { Testimonials } from "@/components/Testimonials";
 
@@ -9,7 +9,7 @@ export default function Home() {
     <div>
       <HeroSection />
       <WhyUsSection />
-      <Packages />
+      <FeaturedPackages />
       <GoogleRating />
       <Testimonials />
     </div>

@@ -55,3 +55,35 @@ export async function getPackageById(id: string): Promise<Package | null> {
     return null;
   }
 }
+
+export async function getTestimonials(): Promise<
+  { name: string; quote: string }[]
+> {
+  try {
+    const testimonialsRef = ref(db, "testinomial");
+    console.log(testimonialsRef);
+    const snapshot = await get(testimonialsRef);
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      console.log(data);
+      // Handle different data structures
+      if (Array.isArray(data)) {
+        return data.filter((item) => item && item.name && item.quote);
+      } else if (typeof data === "object" && data !== null) {
+        // If it's an object with keys, extract the values
+        const testimonials = Object.values(data).filter(
+          (item) =>
+            item &&
+            typeof item === "object" &&
+            "name" in item &&
+            "quote" in item
+        );
+        return testimonials as { name: string; quote: string }[];
+      }
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching testimonials:", error);
+    return [];
+  }
+}

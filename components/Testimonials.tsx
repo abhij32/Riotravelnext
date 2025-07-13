@@ -1,42 +1,89 @@
+"use client";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
+import { useEffect, useState } from "react";
+import { getTestimonials } from "@/lib/packages";
+
+function getColorForName(name: string) {
+  // Google-style color palette
+  const colors = [
+    "#4285f4",
+    "#34a853",
+    "#fbbc04",
+    "#ea4335",
+    "#9c27b0",
+    "#00bcd4",
+    "#ff9800",
+  ];
+  // Simple hash to pick a color
+  let hash = 0;
+  for (let i = 0; i < name.length; i++)
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+
+function getAvatarSVG(name: string) {
+  const letter = name.charAt(0).toUpperCase();
+  const color = getColorForName(name);
+  const svg = `<svg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'><circle cx='200' cy='200' r='180' fill='${color}'/><text x='200' y='240' font-family='Arial, sans-serif' font-size='160' font-weight='bold' text-anchor='middle' fill='white'>${letter}</text></svg>`;
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+
+interface Testimonial {
+  name: string;
+  quote: string;
+  src: string;
+}
 
 export function Testimonials() {
-  const testimonials = [
-    {
-      quote:
-        "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for.",
-      name: "Sarah Chen",
-      designation: "Product Manager at TechFlow",
-      src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "Implementation was seamless and the results exceeded our expectations. The platform's flexibility is remarkable.",
-      name: "Michael Rodriguez",
-      designation: "CTO at InnovateSphere",
-      src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
-      name: "Emily Watson",
-      designation: "Operations Director at CloudScale",
-      src: "https://images.unsplash.com/photo-1623582854588-d60de57fa33f?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "Outstanding support and robust features. It's rare to find a product that delivers on all its promises.",
-      name: "James Kim",
-      designation: "Engineering Lead at DataPro",
-      src: "https://images.unsplash.com/photo-1636041293178-808a6762ab39?q=80&w=3464&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
-      name: "Lisa Thompson",
-      designation: "VP of Technology at FutureNet",
-      src: "https://images.unsplash.com/photo-1624561172888-ac93c696e10c?q=80&w=2592&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  ];
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    getTestimonials()
+      .then((data) => {
+        console.log("Fetched testimonials data:", data);
+        if (Array.isArray(data) && data.length > 0) {
+          const processedTestimonials = data
+            .filter(
+              (t: { name?: string; quote?: string }) => t && t.name && t.quote
+            )
+            .map((t: { name: string; quote: string }) => ({
+              name: t.name,
+              quote: t.quote,
+              src: getAvatarSVG(t.name),
+            }));
+          console.log("Processed testimonials:", processedTestimonials);
+          setTestimonials(processedTestimonials);
+        } else {
+          console.log("No valid testimonials found");
+          setTestimonials([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching testimonials:", err);
+        setError("Failed to load testimonials");
+        setTestimonials([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div className="text-center py-20">Loading testimonials...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-20 text-red-500">{error}</div>;
+  }
+
+  if (testimonials.length === 0) {
+    return <div className="text-center py-20">No testimonials available.</div>;
+  }
+
   return <AnimatedTestimonials testimonials={testimonials} />;
 }

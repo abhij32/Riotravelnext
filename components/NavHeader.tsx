@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -13,45 +14,13 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
-  },
-  {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
-  },
-  {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
-  },
-  {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
-];
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+  SheetClose,
+} from "@/components/ui/sheet";
 
 export function NavHeader() {
   const pathname = usePathname();
@@ -62,7 +31,16 @@ export function NavHeader() {
         {/* Logo */}
         <div className="text-white text-xl font-bold">
           <Link href="/" className="cursor-pointer">
-            LOGO
+            <div className="bg-white p-2 rounded">
+              <Image
+                src="/logo.png"
+                alt="Rio Travel India Logo"
+                width={120}
+                height={40}
+                className="h-10 w-auto"
+                priority
+              />
+            </div>
           </Link>
         </div>
 
@@ -71,8 +49,9 @@ export function NavHeader() {
           <NavigationMenu>
             <NavigationMenuList className="text-white gap-4">
               <NavigationMenuItem>
-                <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/"
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "cursor-pointer transition-colors",
@@ -82,13 +61,14 @@ export function NavHeader() {
                     )}
                   >
                     Home
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <Link href="/packages" legacyBehavior passHref>
-                  <NavigationMenuLink
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/packages"
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "cursor-pointer transition-colors",
@@ -98,8 +78,8 @@ export function NavHeader() {
                     )}
                   >
                     Packages
-                  </NavigationMenuLink>
-                </Link>
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
@@ -130,29 +110,22 @@ export function NavHeader() {
               </button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+              <SheetTitle className="mb-4">Menu</SheetTitle>
               <nav className="flex flex-col gap-4">
-                <Link href="/docs" className="font-bold">
-                  Documentation
-                </Link>
-
-                <Link href="#" className="font-bold">
-                  Components
-                </Link>
                 <div className="flex flex-col gap-2 pl-4">
-                  {components.map((component) => (
-                    <Link
-                      key={component.title}
-                      href={component.href}
-                      className="text-sm"
-                    >
-                      {component.title}
+                  <SheetClose asChild>
+                    <Link href="/" className="text-sm">
+                      Home
                     </Link>
-                  ))}
+                  </SheetClose>
                 </div>
-
-                <Link href="/docs" className="font-bold">
-                  Documentation
-                </Link>
+                <div className="flex flex-col gap-2 pl-4">
+                  <SheetClose asChild>
+                    <Link href="/packages" className="text-sm">
+                      Packages
+                    </Link>
+                  </SheetClose>
+                </div>
 
                 <div className="h-px bg-border my-4" />
                 <Link href="/contact" className="font-bold">
