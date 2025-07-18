@@ -1,19 +1,20 @@
-"use client";
-import { useEffect, useState } from "react";
-import { Packages } from "@/components/Packages";
-import { getPackages, Package } from "@/lib/packages";
+import { getPackages } from "@/lib/packages";
+import { PackagesClient } from "@/app/packages/PackagesClient";
 
-export default function PackagesPage() {
-  const [packages, setPackages] = useState<Package[]>([]);
-  const [loading, setLoading] = useState(true);
+export const metadata = {
+  title: "Packages | Rio Travels India",
+  description:
+    "Explore our curated travel packages across India. Book your next adventure today!",
+  openGraph: {
+    title: "Packages | Rio Travels India",
+    description:
+      "Explore our curated travel packages across India. Book your next adventure today!",
+    // images: ["/logo.png"],
+  },
+};
 
-  useEffect(() => {
-    getPackages().then((data) => {
-      setPackages(data);
-      setLoading(false);
-    });
-  }, []);
-
+export default async function PackagesPage() {
+  const packages = await getPackages();
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header Section */}
@@ -28,16 +29,9 @@ export default function PackagesPage() {
           </p>
         </div>
       </div>
-
       {/* Packages Component */}
       <div className="bg-white dark:bg-gray-900 py-12">
-        {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="w-8 h-8 border-4 border-blue-600 rounded-full animate-spin border-t-transparent"></div>
-          </div>
-        ) : (
-          <Packages packages={packages} />
-        )}
+        <PackagesClient packages={packages} />
       </div>
     </div>
   );

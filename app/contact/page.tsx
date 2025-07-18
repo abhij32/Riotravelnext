@@ -1,4 +1,14 @@
 import { ContactUs } from "@/components/ContactUs";
+export const metadata = {
+  title: "Contact Us | Rio Travels India",
+  description:
+    "Get in touch with Rio Travels India for bookings, queries, and support.",
+  openGraph: {
+    title: "Contact Us | Rio Travels India",
+    description:
+      "Get in touch with Rio Travels India for bookings, queries, and support.",
+  },
+};
 export default function ContactPage() {
   return (
     <main>

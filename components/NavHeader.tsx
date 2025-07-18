@@ -34,7 +34,7 @@ export function NavHeader() {
             <div className="bg-white p-2 rounded">
               <Image
                 src="/logo.png"
-                alt="Rio Travel India Logo"
+                alt="Rio Travels India Logo"
                 width={120}
                 height={40}
                 className="h-10 w-auto"

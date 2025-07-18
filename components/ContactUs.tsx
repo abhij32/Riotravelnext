@@ -11,6 +11,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { sendEmail } from "@/lib/email";
 
 export function ContactUs() {
   const [formData, setFormData] = useState({
@@ -21,37 +22,32 @@ export function ContactUs() {
     service_id: "service_wclajtp",
     template_id: "template_kakd1b9",
   });
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Prepare the payload
-    const payload = {
-      templat_params: {
-        message: formData.toString(),
-      },
-    };
-
+    setSuccess(false);
+    setError("");
+    setSubmitting(true);
+    // Prepare the message string
+    const message = `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nMessage: ${formData.message}`;
     try {
-      const response = await fetch(
-        "https://api.emailjs.com/api/v1.0/email/send",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      // Handle success (e.g., show a success message)
-      console.log("Message sent successfully:", payload);
-    } catch (error) {
-      console.error("Error sending message:", error);
+      await sendEmail(message);
+      setSuccess(true);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        service_id: "service_wclajtp",
+        template_id: "template_kakd1b9",
+      });
+    } catch {
+      setError("Failed to send. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -174,6 +170,17 @@ export function ContactUs() {
               className="bg-white rounded-xl shadow-sm p-8"
             >
               <h3 className="text-xl font-semibold mb-6">Send us a Message</h3>
+              {success && (
+                <div className="text-green-600 font-semibold text-center py-2 mb-2">
+                  Thank you! Your message has been sent. We will contact you
+                  soon.
+                </div>
+              )}
+              {error && (
+                <div className="text-red-600 font-semibold text-center py-2 mb-2">
+                  {error}
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Input
@@ -183,6 +190,7 @@ export function ContactUs() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     className="bg-gray-50"
+                    disabled={submitting}
                   />
                   <Input
                     type="email"
@@ -192,6 +200,7 @@ export function ContactUs() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     className="bg-gray-50"
+                    disabled={submitting}
                   />
                 </div>
                 <Input
@@ -202,6 +211,7 @@ export function ContactUs() {
                     setFormData({ ...formData, phone: e.target.value })
                   }
                   className="bg-gray-50"
+                  disabled={submitting}
                 />
                 <textarea
                   placeholder="Your Message"
@@ -211,12 +221,17 @@ export function ContactUs() {
                     setFormData({ ...formData, message: e.target.value })
                   }
                   className="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={submitting}
                 />
                 <Button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center"
+                  disabled={submitting}
                 >
-                  Send Message
+                  {submitting && (
+                    <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></span>
+                  )}
+                  {submitting ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </motion.div>
